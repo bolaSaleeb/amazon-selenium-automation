@@ -153,7 +153,7 @@ mvn clean test
 
 ---
 
-## 📂 Project Structure (Recommended)
+## 📂 Project Structure
 
 ```
 src
