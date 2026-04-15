@@ -2,7 +2,9 @@
 
 ## 📌 Overview
 This project is a Selenium WebDriver automation script written in Java using Maven.  
-It simulates a real user journey on Amazon Egypt (amazon.eg), including browsing products, applying filters, adding items to cart, verifying cart integrity, proceeding to checkout, and validating subtotal calculations.
+It simulates a real-world e-commerce user journey on Amazon Egypt (amazon.eg), including product browsing, filtering, cart validation, checkout flow, address creation, and subtotal verification.
+
+The goal of this project is to practice real-world automation testing scenarios using dynamic web elements and end-to-end workflows.
 
 ---
 
@@ -16,16 +18,16 @@ It simulates a real user journey on Amazon Egypt (amazon.eg), including browsing
 
 ---
 
-## 🚀 What the Script Does
+## 🚀 Test Flow Summary
 
-### 1. Open Amazon Egypt
-- Launches Chrome browser
-- Navigates to https://www.amazon.eg
-- Maximizes window
+### 1. Launch Application
+- Opens Chrome browser
+- Navigates to Amazon Egypt
+- Maximizes the window
 
 ---
 
-### 2. Browse Categories
+### 2. Product Navigation
 - Opens hamburger menu
 - Navigates to:
   - See All Categories
@@ -35,37 +37,39 @@ It simulates a real user journey on Amazon Egypt (amazon.eg), including browsing
 ---
 
 ### 3. Apply Filters
-- Filters products by:
-  - Free Shipping
-  - New condition
+- Applies:
+  - Free Shipping filter
+  - New condition filter
 - Sorts products by:
   - Price (High → Low)
 
 ---
 
-### 4. Product Search Logic
-- Scans product list pages
-- Identifies products under **15,000 EGP**
-- Navigates pages until matching products are found
+### 4. Product Selection Logic
+- Iterates through product listing pages
+- Extracts product prices
+- Selects products under **15,000 EGP**
+- Navigates across pages until matching products are found
 
 ---
 
-### 5. Add Products to Cart
-- Selects products cheaper than 15,000 EGP
-- Clicks "Add to Cart"
+### 5. Add to Cart
+- Adds valid products to cart
 - Stores:
   - Product WebElements
-  - Product titles for verification
+  - Product titles for validation
 
 ---
 
 ### 6. Cart Validation
-- Opens cart page
-- Extracts all cart product titles
+- Retrieves cart items
 - Compares:
   - Selected products vs cart products
-- Throws exception if mismatch detected
+- Ensures:
+  - Same number of items
+  - Same product titles
 
+If mismatch occurs:
 ```java
 throw new RuntimeException("Chosen Products are not the same as products in cart");
 ```
@@ -73,16 +77,16 @@ throw new RuntimeException("Chosen Products are not the same as products in cart
 ---
 
 ### 7. Checkout Process
-- Clicks "Proceed to Checkout"
-- Logs into Amazon account:
-  - Email input
-  - Password input
+- Proceeds to checkout page
+- Logs into Amazon account using:
+  - Email
+  - Password
 
 ---
 
-### 8. Delivery & Address Handling
-- Selects Cash on Delivery (if available)
-- Adds a new delivery address:
+### 8. Delivery Address Handling
+- Selects Cash on Delivery option (if available)
+- Adds a **new delivery address** during checkout:
   - Full name
   - Phone number
   - Street address
@@ -91,69 +95,70 @@ throw new RuntimeException("Chosen Products are not the same as products in cart
 
 ---
 
-### 9. Subtotal Verification
+### 9. Subtotal Validation
 - Extracts subtotal from:
   - Cart page
   - Checkout summary page
 - Cleans currency formatting:
   - Removes "EGP"
-  - Removes commas and non-breaking spaces
-- Converts to `double`
+  - Removes commas and special characters
+- Converts value to `double`
+- Compares both values for consistency
 
 ```java
-double subtotalValue = Double.parseDouble(clean);
-```
-
-- Compares both values:
-
-```java
-if(subtotalValue != subtotal)
+if(subtotalValue != subtotal) {
     throw new RuntimeException("Total items value does not match subtotal!");
+}
 ```
 
 ---
 
-## 🧠 Key Concepts Practiced
-- Selenium locators (XPath, CSS Selectors, ID)
+## ⚠️ Important Preconditions Before Running the Project
+
+### 🛒 Cart State
+- The Amazon account **must have an empty shopping cart** before execution.
+- This ensures only the automation script controls item selection.
+
+---
+
+### 📍 Delivery Address Requirements
+- The account **must already contain at least one saved address**
+- During execution, the script will:
+  - Navigate to checkout
+  - Add a **new delivery address**
+  - Use it for order flow validation
+
+---
+
+### 🔐 Account Requirements
+- Valid Amazon.eg account required
+- Must support:
+  - Checkout access
+  - Address creation during checkout
+  - Cash on Delivery option (if available)
+
+---
+
+### ⚠️ Notes
+- This project is for **automation testing practice only**
+- It is not intended for real order placement
+- Amazon UI changes may break locators over time
+
+---
+
+## 🧠 Key Automation Concepts Used
+- Selenium locators (XPath, CSS, ID)
 - Explicit waits (WebDriverWait)
 - JavaScript Executor clicks
-- Dynamic element handling
 - Pagination handling
-- Data validation between pages
-- String cleaning & parsing currency
-- Exception handling in automation
+- Dynamic element handling
+- Data extraction & validation
+- Exception handling
+- String parsing for currency values
 
 ---
 
-## ⚠️ Important Notes
-- Amazon UI changes frequently → locators may break
-- Use explicit waits instead of Thread.sleep for stability
-- Do NOT hardcode credentials in real projects
-- ChromeDriver version must match installed Chrome browser
-
----
-
-## 🔧 Setup Instructions
-
-### 1. Install Dependencies
-Make sure Maven is installed and add Selenium dependency in `pom.xml`.
-
-### 2. Run the Project
-Run the main class:
-
-```
-AmazonTest.java
-```
-
-or via Maven:
-
-```
-mvn clean test
-```
-
----
-
-## 📂 Project Structure
+## 📂 Project Structure (Recommended)
 
 ```
 src
@@ -166,5 +171,48 @@ README.md
 
 ---
 
+## 🔧 How to Run
+
+### 1. Clone the Repository
+```bash
+git clone https://github.com/bolaSaleeb/amazon-selenium-automation.git
+```
+
+### 2. Open the Project
+- Open the project in **IntelliJ IDEA** or **Eclipse**
+- Make sure it is detected as a **Maven project**
+- Wait for dependencies to download
+
+### 3. Install Dependencies
+Ensure `pom.xml` contains Selenium dependency:
+
+```xml
+<dependency>
+    <groupId>org.seleniumhq.selenium</groupId>
+    <artifactId>selenium-java</artifactId>
+    <version>4.21.0</version>
+</dependency>
+```
+
+### 4. Run the Project
+
+#### Option 1: Run directly
+- Open `AmazonTest.java`
+- Click Run (Java Application)
+
+#### Option 2: Run using Maven
+```bash
+mvn clean test
+```
+
+---
+
+## ⚠️ Important Notes
+- Do NOT hardcode real credentials in production projects
+- ChromeDriver version must match installed Chrome browser
+- Use explicit waits instead of Thread.sleep for stability
+
+---
+
 ## 📌 Author
-Automation testing project built for learning Selenium WebDriver workflows and real-world e-commerce automation scenarios.
+Automation testing project built to practice real-world Selenium WebDriver workflows for QA engineering skill development.
